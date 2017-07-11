@@ -9,7 +9,10 @@ From: godlovedc/easybuild
     source /etc/profile
     export MODULEPATH=/opt/apps/easybuild/modules/all:$MODULEPATH
     module load EasyBuild
+    BUILD_DIR=$(mktemp -d --suffix=.build)
+    cd $BUILD_DIR
     eb --prefix=/easybuild --robot=$PWD /*.eb
+    rm -rf $BUILD_DIR
     exit
 
 %environment
