@@ -11,7 +11,7 @@ From: godlovedc/easybuild
     module load EasyBuild
     BUILD_DIR=$(mktemp -d --suffix=.build)
     cd $BUILD_DIR
-    eb --prefix=/easybuild --robot=$PWD /*.eb
+    eb --prefix=$PWD/tmp --robot=$PWD /*.eb --installpath=/easybuild
     rm -rf $BUILD_DIR
     exit
 
