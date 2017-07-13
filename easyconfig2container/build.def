@@ -5,6 +5,7 @@ From: godlovedc/easybuild
     cp *.eb $SINGULARITY_ROOTFS/
 
 %post
+    # install app (as "easybuild" user)
     su - easybuild 
     source /etc/profile
     export MODULEPATH=/opt/apps/easybuild/modules/all:$MODULEPATH
@@ -15,5 +16,17 @@ From: godlovedc/easybuild
     rm -rf $BUILD_DIR
     exit
 
-%environment
+    # setup environment based on module
+    source /etc/profile
     export MODULEPATH=/easybuild/modules/all:$MODULEPATH
+    cd /
+    APP=$(ls *.eb | awk -F - {'print $1'})
+    BEFORE=$(mktemp) && AFTER=$(mktemp)
+    printenv | sort > $BEFORE
+    module load $APP
+    printenv | sort > $AFTER
+    for VAR in $(comm -13 $BEFORE $AFTER | grep -v -E "^EB|^LMOD_|^_|MODULE"); do
+        echo "export ${VAR}" >> /.singularity.d/env/90-environment.sh
+    done
+    rm $BEFORE $AFTER
+
